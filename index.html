@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATC Trainings-Checkliste</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+        h1 { color: #2c3e50; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
+        
+        /* Setup / Control Panel */
+        .setup-box { 
+            background: #fff; 
+            padding: 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            margin-bottom: 20px; 
+            border-top: 5px solid #2c3e50;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .controls label {
+            display: flex;
+            flex-direction: column;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #2c3e50;
+        }
+        .controls input, .controls select {
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1em;
+        }
+        .controls input:focus, .controls select:focus {
+            outline: none;
+            border-color: #28a745;
+            box-shadow: 0 0 5px rgba(40,167,69,0.3);
+        }
+        
+        /* Goldene Regel Box */
+        .golden-rule {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            font-size: 1.05em;
+        }
+
+        ul { list-style-type: none; padding: 0; }
+        li { background: #fff; margin-bottom: 15px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        /* Rollen-Farben */
+        .student { color: #0056b3; font-weight: bold; }
+        .atc { color: #28a745; font-weight: bold; }
+        
+        /* Haupt-Sektionen (Einklappbar) */
+        .main-section {
+            margin-top: 25px;
+        }
+        .main-section-title {
+            color: #34495e;
+            background-color: #e2e8f0;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            list-style: none; /* Versteckt das Standard-Dreieck in modernen Browsern */
+            display: flex;
+            align-items: center;
+        }
+        .main-section-title::-webkit-details-marker {
+            display: none; /* Versteckt das Dreieck in Safari */
+        }
+        .main-section-title::before {
+            content: '▶';
+            display: inline-block;
+            margin-right: 12px;
+            font-size: 0.8em;
+            transition: transform 0.2s ease;
+            color: #2c3e50;
+        }
+        details[open] > .main-section-title::before {
+            transform: rotate(90deg);
+        }
+        details[open] > .main-section-title {
+            margin-bottom: 15px;
+        }
+
+        /* Aufklapp-Elemente (Curveballs & Notfälle) */
+        details.curveball {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        details.curveball > summary {
+            font-weight: bold;
+            color: #856404;
+            cursor: pointer;
+            outline: none;
+            padding: 5px 0;
+        }
+        details.curveball > summary:hover { color: #d39e00; }
+        
+        /* Warnhinweise / Controller-Fokus */
+        .attention {
+            background: #e8f4f8;
+            border-left: 4px solid #17a2b8;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #333;
+        }
+        
+        /* Notfall-Styling */
+        .emergency details.curveball { background: #f8d7da; border-color: #f5c6cb; }
+        .emergency details.curveball > summary { color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <h1>🎙️ Controller-Checkliste: VFR Training</h1>
+    
+    <div class="setup-box">
+        <h3>⚙️ Übungs-Setup (Live-Anpassung)</h3>
+        <div class="controls">
+            <label>Sprache / Language:
+                <select id="lang" onchange="updateATC()">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                </select>
+            </label>
+            <label>Flugplatz: <input type="text" id="airport" value="Stuttgart" oninput="updateATC()"></label>
+            <label>Rufzeichen: <input type="text" id="callsign" value="D-EABC" oninput="updateATC()"></label>
+            <label>Piste: <input type="text" id="rwy" value="25" oninput="updateATC()"></label>
+            <label>QNH: <input type="text" id="qnh" value="1015" oninput="updateATC()"></label>
+            <label>Abflugpunkt: <input type="text" id="dep" value="Echo" oninput="updateATC()"></label>
+            <label>Anflugpunkt: <input type="text" id="arr" value="Sierra" oninput="updateATC()"></label>
+        </div>
+    </div>
+
+    <div class="golden-rule i18n" 
+         data-de="<strong>⚠️ GOLDENE PHRASEOLOGIE-REGEL:</strong><br>Achte beim Schüler strikt darauf, dass vor jeder Pistenbezeichnung immer das Wort <strong>&quot;Piste&quot;</strong> gesagt wird! Eine alleinstehende Zahl ist unzulässig und muss von dir als Controller korrigiert werden (&quot;{callShort}, bestätigen Sie Haltepunkt <em>Piste</em> {rwy}&quot;)." 
+         data-en="<strong>⚠️ GOLDENE PHRASEOLOGIE-REGEL:</strong><br>Achte beim Schüler strikt darauf, dass vor jeder Pistenbezeichnung immer das Wort <strong>&quot;Runway&quot;</strong> gesagt wird! Eine alleinstehende Zahl ist unzulässig und muss von dir als Controller korrigiert werden (&quot;{callShort}, confirm holding point <em>runway</em> {rwy}&quot;).">
+    </div>
+
+    <details class="main-section">
+        <summary class="main-section-title">🛫 TEIL 1: VFR ABFLUG (DEPARTURE)</summary>
+        <ul>
+            <li>
+                <strong>1. Initial Call (Einleitungsanruf)</strong><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{apt} Turm, {call}.&quot;" data-en="&quot;{apt} Tower, {call}.&quot;"></span><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, {apt} Turm.&quot;" data-en="&quot;{call}, {apt} Tower.&quot;"></span>
+            </li>
+            <li>
+                <strong>2. Rollfreigabe (Taxi Clearance)</strong><br>
+                <span class="student student-label">Schüler:</span> <em class="i18n" data-de="Meldet Position (GAT) und Absicht (VFR Abflug über {dep})." data-en="Reports position (GAT) and intentions (VFR departure via {dep})."></em><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, rollen Sie zum Rollhalt Piste {rwy} über November und Alpha. QNH {qnh}.&quot;" data-en="&quot;{callShort}, taxi holding point runway {rwy} via November and Alpha. QNH {qnh}.&quot;"></span>
+                <div class="attention i18n" data-de="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler MUSS &quot;Piste {rwy}&quot; und QNH ({qnh}) exakt zurücklesen. Fehlt eines davon, frage nach." data-en="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler MUSS &quot;Runway {rwy}&quot; und QNH ({qnh}) exakt zurücklesen. Fehlt eines davon, frage nach."></div>
+                
+                <details class="curveball">
+                    <summary class="i18n" data-de="⚡ Schwierigkeit: Spontaner Pistenwechsel am Boden" data-en="⚡ Curveball: Spontaneous runway change on ground"></summary>
+                    <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, Windänderung 080/15. Erwarte Abflug Piste 07. Rollen zum Rollhalt Piste 07 über Alpha.&quot;" data-en="&quot;{callShort}, wind change 080/15. Expect departure runway 07. Taxi holding point runway 07 via Alpha.&quot;"></span></p>
+                    <div class="attention i18n" data-de="<strong>Check:</strong> Akzeptiert der Schüler die Änderung? Liest er den neuen Rollhalt inkl. dem Wort &quot;Piste&quot; korrekt zurück?" data-en="<strong>Check:</strong> Akzeptiert der Schüler die Änderung? Liest er den neuen Rollhalt inkl. dem Wort &quot;Runway&quot; korrekt zurück?"></div>
+                </details>
+            </li>
+            <li>
+                <strong>3. Startfreigabe (Takeoff Clearance)</strong><br>
+                <span class="student student-label">Schüler:</span> <em class="i18n" data-de="Meldet abflugbereit am Rollhalt Piste {rwy}." data-en="Reports ready for departure at holding point runway {rwy}."></em><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, Wind 240 Grad 10 Knoten, Piste {rwy} Start frei. Verlassen über {dep}.&quot;" data-en="&quot;{callShort}, wind 240 degrees 10 knots, runway {rwy} cleared for takeoff. Leave via {dep}.&quot;"></span>
+                <div class="attention i18n" data-de="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> &quot;Start frei&quot; MUSS wörtlich zurückgelesen werden! Kein &quot;Roger&quot; akzeptieren. Auch &quot;Piste {rwy}&quot; muss wiederholt werden." data-en="👉 <strong>CONTROLLER FOCUS:</strong> &quot;Cleared for takeoff&quot; MUST be read back verbatim! Do not accept &quot;Roger&quot;. &quot;Runway {rwy}&quot; must also be repeated."></div>
+            </li>
+            <li>
+                <strong>4. Ausflugmeldung (Leaving CTR)</strong><br>
+                <span class="student student-label">Schüler:</span> <em class="i18n" data-de="Meldet Verlassen der Kontrollzone über {dep}." data-en="Reports leaving control zone via {dep}."></em><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, verstanden. Frequenzwechsel genehmigt.&quot;" data-en="&quot;{callShort}, roger. Frequency change approved.&quot;"></span>
+            </li>
+        </ul>
+    </details>
+
+    <details class="main-section">
+        <summary class="main-section-title">🛬 TEIL 2: VFR ANFLUG (ARRIVAL)</summary>
+        <ul>
+            <li>
+                <strong>1. Initial Call (5 Min vor Einflug)</strong><br>
+                <span class="student student-label">Schüler:</span> <em class="i18n" data-de="Ruft Turm." data-en="Calls Tower."></em><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, {apt} Turm.&quot;" data-en="&quot;{call}, {apt} Tower.&quot;"></span>
+            </li>
+            <li>
+                <strong>2. Einflugfreigabe (CTR Clearance)</strong><br>
+                <span class="student student-label">Schüler:</span> <em class="i18n" data-de="Meldet Position (z.B. vor {arr}), Höhe (3500ft) und Absicht (Landung)." data-en="Reports position (e.g. prior to {arr}), altitude (3500ft) and intentions (landing)."></em><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, fliegen Sie über {arr} in die Kontrollzone ein, Piste {rwy}, QNH {qnh}, melden Sie {arr}.&quot;" data-en="&quot;{callShort}, enter control zone via {arr}, runway {rwy}, QNH {qnh}, report {arr}.&quot;"></span>
+                <div class="attention i18n" data-de="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Hat er Freigabegrenze ({arr}), &quot;Piste {rwy}&quot; und QNH {qnh} wiederholt?" data-en="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Hat er Freigabegrenze ({arr}), &quot;Runway {rwy}&quot; und QNH {qnh} wiederholt?"></div>
+
+                <details class="curveball">
+                    <summary class="i18n" data-de="⚡ Schwierigkeit: Warteschleife (Holding) am Meldepunkt" data-en="⚡ Curveball: Holding at reporting point"></summary>
+                    <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, erwarten Sie Verzögerung wegen IFR-Verkehr. Kreisen Sie über {arr} und halten Sie 3500 Fuß.&quot;" data-en="&quot;{callShort}, expect delay due to IFR traffic. Hold over {arr} and maintain 3500 feet.&quot;"></span></p>
+                    <div class="attention i18n" data-de="<strong>Check:</strong> Bestätigt der Schüler das Holding UND die geforderte Höhe explizit?" data-en="<strong>Check:</strong> Bestätigt der Schüler das Holding UND die geforderte Höhe explizit?"></div>
+                </details>
+            </li>
+            <li>
+                <strong>3. Platzrunde (Traffic Circuit)</strong><br>
+                <span class="student student-label">Schüler:</span> <em class="i18n" data-de="Meldet {arr}." data-en="Reports {arr}."></em><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, rechte Platzrunde Piste {rwy}, melden Sie Queranflug.&quot;" data-en="&quot;{callShort}, join right hand traffic circuit runway {rwy}, report base.&quot;"></span>
+
+                <details class="curveball">
+                    <summary class="i18n" data-de="⚡ Schwierigkeit: Vollkreis zur Staffelung (Orbit)" data-en="⚡ Curveball: Orbit for separation"></summary>
+                    <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, zur Staffelung, machen Sie einen Vollkreis links.&quot;" data-en="&quot;{callShort}, for separation, make one orbit left.&quot;"></span></p>
+                    <div class="attention i18n" data-de="<strong>Check:</strong> Dreht er (imaginär) in die sichere Richtung, weg von der Piste?" data-en="<strong>Check:</strong> Do they (mentally) turn in the safe direction, away from the runway?"></div>
+                </details>
+            </li>
+            <li>
+                <strong>4. Endanflug & Landefreigabe (Final / Landing Clearance)</strong><br>
+                <span class="student student-label">Schüler:</span> <em class="i18n" data-de="Meldet rechten Queranflug Piste {rwy} (oder Endanflug)." data-en="Reports right base runway {rwy} (or final)."></em><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, Wind 260 Grad 12 Knoten, Piste {rwy}, Landung frei.&quot;" data-en="&quot;{callShort}, wind 260 degrees 12 knots, runway {rwy} cleared to land.&quot;"></span>
+                
+                <details class="curveball">
+                    <summary class="i18n" data-de="⚡ Schwierigkeit: Verkehrsinformation & Wirbelschleppen" data-en="⚡ Curveball: Traffic info & Wake turbulence"></summary>
+                    <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, Verkehr 12 Uhr, 3 Meilen, B737. Vorsicht Wirbelschleppen.&quot;" data-en="&quot;{callShort}, traffic 12 o'clock, 3 miles, B737. Caution wake turbulence.&quot;"></span></p>
+                    <div class="attention i18n" data-de="<strong>Check:</strong> Schüler muss mit &quot;Verkehr in Sicht&quot; oder &quot;Nicht in Sicht&quot; antworten, kein reines &quot;Roger&quot;." data-en="<strong>Check:</strong> Student must reply with &quot;Traffic in sight&quot; or &quot;Negative contact&quot;, not just &quot;Roger&quot;."></div>
+                </details>
+
+                <details class="curveball">
+                    <summary class="i18n" data-de="⚡ Schwierigkeit: Durchstarten (Go-Around) kurz vor der Landung" data-en="⚡ Curveball: Go-Around on short final"></summary>
+                    <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, Piste blockiert, starten Sie durch.&quot;" data-en="&quot;{callShort}, runway occupied, go around.&quot;"></span></p>
+                    <div class="attention i18n" data-de="<strong>Check:</strong> Kommt die Reaktion prompt? Das Kommando &quot;Starte durch, {callShort}&quot; muss sofort kommen." data-en="<strong>Check:</strong> Is the reaction prompt? The call &quot;Going around, {callShort}&quot; must come immediately."></div>
+                </details>
+            </li>
+        </ul>
+    </details>
+
+    <details class="main-section">
+        <summary class="main-section-title">🚖 TEIL 3: NACH DER LANDUNG (TAXI-IN)</summary>
+        <ul>
+            <li>
+                <strong>1. Piste verlassen (Runway Vacated)</strong><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{apt} Turm, {call}, Piste {rwy} verlassen über Delta.&quot;" data-en="&quot;{apt} Tower, {call}, runway {rwy} vacated via Delta.&quot;"></span><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, rollen Sie zum GAT über Delta und November.&quot;" data-en="&quot;{callShort}, taxi to GAT via Delta and November.&quot;"></span>
+                <div class="attention i18n" data-de="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler darf erst funken, wenn er die Pistenbegrenzungslinie überquert hat. Liest er Rollwege und &quot;Piste {rwy}&quot; korrekt zurück?" data-en="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler darf erst funken, wenn er die Pistenbegrenzungslinie überquert hat. Liest er Rollwege und &quot;Runway {rwy}&quot; korrekt zurück?"></div>
+
+                <details class="curveball">
+                    <summary class="i18n" data-de="⚡ Schwierigkeit: Vorfahrt gewähren beim Rollen" data-en="⚡ Curveball: Give way during taxi"></summary>
+                    <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, halten Sie vor Rollweg November. Vorfahrt für die Boeing 737 von links.&quot;" data-en="&quot;{callShort}, hold short of taxiway November. Give way to Boeing 737 from left.&quot;"></span></p>
+                    <div class="attention i18n" data-de="<strong>Check:</strong> Bestätigt der Schüler das &quot;Halten vor&quot; explizit?" data-en="<strong>Check:</strong> Bestätigt der Schüler das &quot;Holding short&quot; explizit?"></div>
+                </details>
+            </li>
+            <li>
+                <strong>2. Abstellplatz & Frequenzwechsel (Block-On)</strong><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{callShort}, am GAT, erbitte Verlassen der Frequenz.&quot;" data-en="&quot;{callShort}, at GAT, request frequency change.&quot;"></span><br>
+                <span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, Verlassen der Frequenz genehmigt. Tschüss.&quot;" data-en="&quot;{callShort}, frequency change approved. Bye.&quot;"></span>
+            </li>
+        </ul>
+    </details>
+
+    <details class="main-section">
+        <summary class="main-section-title">🚨 TEIL 4: NOTFÄLLE (EMERGENCIES)</summary>
+        <div class="emergency" style="padding-top: 10px;">
+            <p><em class="i18n" data-de="Klicke auf den jeweiligen Notfall, um das Skript aufzuklappen:" data-en="Click on the respective emergency to expand the script:"></em></p>
+            
+            <details class="curveball">
+                <summary class="i18n" data-de="🔴 Szenario 1: MAYDAY (Triebwerksausfall)" data-en="🔴 Scenario 1: MAYDAY (Engine Failure)"></summary>
+                <p><strong class="i18n" data-de="Situation: Komplettausfall vor {arr}, Außenlandung auf Feld." data-en="Situation: Complete failure prior to {arr}, forced landing on field."></strong></p>
+                <p><span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;Mayday, Mayday, Mayday... {apt} Turm, {call}...&quot; (Gibt Call, Typ, Problem, Position, Absicht an)." data-en="&quot;Mayday, Mayday, Mayday... {apt} Tower, {call}...&quot; (States Call, Type, Problem, Position, Intentions)."></span></p>
+                <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, {apt} Turm, Mayday verstanden. Wenn möglich, melden Sie Personen an Bord (POB).&quot;" data-en="&quot;{call}, {apt} Tower, Mayday roger. If able, report persons on board (POB).&quot;"></span></p>
+                <div class="attention i18n" data-de="👉 <strong>Controller-Fokus:</strong> Frag nach POB für die Feuerwehr. Gib unaufgefordert Wind und QNH. Keine Frequenzwechsel verlangen!" data-en="👉 <strong>Controller-Fokus:</strong> Frag nach POB für die Feuerwehr. Gib unaufgefordert Wind und QNH. Keine Frequenzwechsel verlangen!"></div>
+            </details>
+
+            <details class="curveball">
+                <summary class="i18n" data-de="🟠 Szenario 2: PAN-PAN (Dringlichkeit / Unruhiger Motor)" data-en="🟠 Scenario 2: PAN-PAN (Urgency / Rough Engine)"></summary>
+                <p><strong class="i18n" data-de="Situation: Motor läuft unrund, Pilot will direkt landen." data-en="Situation: Rough running engine, pilot requests direct landing."></strong></p>
+                <p><span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;Pan-Pan, Pan-Pan, Pan-Pan... {apt} Turm, {call}...&quot; (Gibt Call, Problem, Position, Absicht an)." data-en="&quot;Pan-Pan, Pan-Pan, Pan-Pan... {apt} Tower, {call}...&quot; (States Call, Problem, Position, Intentions)."></span></p>
+                <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, {apt} Turm, Pan-Pan verstanden. Direkter Anflug Piste {rwy} genehmigt. Sie haben Priorität. Piste {rwy} Landung frei.&quot;" data-en="&quot;{call}, {apt} Tower, Pan-Pan roger. Cleared for straight-in approach runway {rwy}. Runway {rwy} cleared to land.&quot;"></span></p>
+                <div class="attention i18n" data-de="👉 <strong>Controller-Fokus:</strong> Weg freiräumen. Am Ende fragen: &quot;Benötigen Sie medizinische Assistenz/Feuerwehr nach der Landung?&quot;" data-en="👉 <strong>Controller-Fokus:</strong> Weg freiräumen. Am Ende fragen: &quot;Do you require medical assistance or fire brigade upon arrival?&quot;"></div>
+            </details>
+
+            <details class="curveball">
+                <summary class="i18n" data-de="🟡 Szenario 3: LOST PROCEDURE (Orientierungsverlust)" data-en="🟡 Scenario 3: LOST PROCEDURE (Disorientation)"></summary>
+                <p><strong class="i18n" data-de="Situation: Schüler hat sich verflogen und meldet das." data-en="Situation: Student is lost and reports it."></strong></p>
+                <p><span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{apt} Turm, {call}, wir sind uns über unsere Position unklar.&quot;" data-en="&quot;{apt} Tower, {call}, we are uncertain of our position.&quot;"></span></p>
+                <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, {apt} Turm. Schalten Sie Transponder auf Code 7700 und drücken Sie Ident.&quot;" data-en="&quot;{call}, {apt} Tower. Squawk 7700 and Ident.&quot;"></span></p>
+                <p><span class="atc atc-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, Radar-Kontakt. 5 Meilen nördlich Ludwigsburg. Fliegen Sie Steuerkurs 180 Grad in Richtung Flughafen.&quot;" data-en="&quot;{call}, radar contact 5 miles north of Ludwigsburg. Fly heading 180 towards the airport.&quot;"></span></p>
+                <div class="attention i18n" data-de="👉 <strong>Controller-Fokus:</strong> Sehr ruhige Stimme. Klare, einfache Anweisungen (Steuerkurse) geben, um den Schüler mental zu entlasten." data-en="👉 <strong>Controller-Fokus:</strong> Sehr ruhige Stimme. Klare, einfache Anweisungen (Steuerkurse) geben, um den Schüler mental zu entlasten."></div>
+            </details>
+        </div>
+    </details>
+
+    <!-- JavaScript für die Live-Aktualisierung -->
+    <script>
+        function updateATC() {
+            // 1. Werte aus den Feldern auslesen
+            const lang = document.getElementById('lang').value;
+            const apt = document.getElementById('airport').value || 'Stuttgart';
+            const call = document.getElementById('callsign').value.toUpperCase() || 'D-EABC';
+            
+            // 2. Kurzform des Rufzeichens berechnen (z.B. D-EABC -> D-BC)
+            let callShort = call;
+            const parts = call.split('-');
+            if (parts.length === 2 && parts[1].length >= 2) {
+                callShort = parts[0] + '-' + parts[1].slice(-2);
+            } else if (call.length >= 4) {
+                callShort = call.charAt(0) + '-' + call.slice(-2);
+            }
+
+            const rwy = document.getElementById('rwy').value || '25';
+            const qnh = document.getElementById('qnh').value || '1015';
+            const dep = document.getElementById('dep').value || 'Echo';
+            const arr = document.getElementById('arr').value || 'Sierra';
+
+            // 3. Alle Texte durchgehen und Platzhalter ersetzen
+            document.querySelectorAll('.i18n').forEach(el => {
+                let textTemplate = el.getAttribute('data-' + lang);
+                if (textTemplate) {
+                    let updatedText = textTemplate
+                        .replace(/{call}/g, call)
+                        .replace(/{callShort}/g, callShort)
+                        .replace(/{rwy}/g, rwy)
+                        .replace(/{qnh}/g, qnh)
+                        .replace(/{dep}/g, dep)
+                        .replace(/{arr}/g, arr)
+                        .replace(/{apt}/g, apt);
+                    el.innerHTML = updatedText;
+                }
+            });
+
+            // 4. Labels (Schüler / Turm) übersetzen
+            document.querySelectorAll('.student-label').forEach(el => {
+                el.innerText = lang === 'de' ? 'Schüler:' : 'Student:';
+            });
+            document.querySelectorAll('.atc-label').forEach(el => {
+                el.innerText = lang === 'de' ? 'Du (Turm):' : 'You (Tower):';
+            });
+        }
+
+        // Führe die Funktion einmal direkt beim Laden der Seite aus.
+        window.onload = updateATC;
+    </script>
+</body>
+</html>
