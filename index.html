@@ -178,10 +178,12 @@
                     <option value="en">English</option>
                 </select>
             </label>
-            <label>Flugplatz: <input type="text" id="airport" value="Stuttgart" oninput="updateATC()"></label>
+            <label>Startflugplatz: <input type="text" id="airport" value="Stuttgart" oninput="updateATC()"></label>
+            <label>Zielflugplatz: <input type="text" id="destAirport" value="Freiburg" oninput="updateATC()"></label>
             <label>Tower Freq: <input type="text" id="twrFreq" value="119.055" oninput="updateATC()"></label>
             <label>Ground Freq: <input type="text" id="gndFreq" value="118.605" oninput="updateATC()"></label>
-            <label>Rufzeichen: <input type="text" id="callsign" value="D-EABC" oninput="updateATC()"></label>
+            <label>Rufzeichen: <input type="text" id="callsign" value="D-ESIA" oninput="updateATC()"></label>
+            <label>Flugzeugtyp: <input type="text" id="acType" value="Robin DR-400" oninput="updateATC()"></label>
             <label>Piste: <input type="text" id="rwy" value="25" oninput="updateATC()"></label>
             <label>QNH: <input type="text" id="qnh" value="1015" oninput="updateATC()"></label>
             <label>Abflugpunkt: <input type="text" id="dep" value="Echo" oninput="updateATC()"></label>
@@ -199,7 +201,7 @@
             </li>
             <li>
                 <strong>2. Rollfreigabe (Taxi Clearance)</strong><br>
-                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{apt} Rollkontrolle, {call}, VFR am Abstellplatz der allgemeinen Luftfahrt, erbitte Rollen für VFR-Abflug über {dep}.&quot;" data-en="&quot;{apt} Ground, {call}, VFR at General Aviation Terminal, request taxi for VFR departure via {dep}.&quot;"></span><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{call}, {type}, am Abstellplatz der allgemeinen Luftfahrt, VFR nach {dest} über {dep}, erbitte Rollen.&quot;" data-en="&quot;{call}, {type}, at General Aviation Terminal, VFR to {dest} via {dep}, request taxi.&quot;"></span><br>
                 <span class="atc-gnd atc-gnd-label">Du (Boden):</span> <span class="i18n" data-de="&quot;{callShort}, rollen Sie zum Rollhalt Piste {rwy} über November und Alpha. QNH {qnh}.&quot;" data-en="&quot;{callShort}, taxi holding point runway {rwy} via November and Alpha. QNH {qnh}.&quot;"></span>
                 <div class="attention i18n" data-de="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler MUSS &quot;Piste {rwy}&quot; und QNH ({qnh}) exakt zurücklesen. Fehlt eines davon, frage nach." data-en="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler MUSS &quot;Runway {rwy}&quot; und QNH ({qnh}) exakt zurücklesen. Fehlt eines davon, frage nach."></div>
                 
@@ -222,7 +224,7 @@
             </li>
             <li>
                 <strong>5. Ausflugmeldung (Leaving CTR)</strong><br>
-                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{callShort}, verlasse Kontrollzone über {dep}.&quot;" data-en="&quot;{callShort}, leaving control zone via {dep}.&quot;"></span><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{callShort}, {dep} in 3500 Fuß.&quot;" data-en="&quot;{callShort}, {dep} at 3500 feet.&quot;"></span><br>
                 <span class="atc atc-twr-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, verstanden. Frequenzwechsel genehmigt.&quot;" data-en="&quot;{callShort}, roger. Frequency change approved.&quot;"></span>
             </li>
         </ul>
@@ -238,7 +240,7 @@
             </li>
             <li>
                 <strong>2. Einflugfreigabe (CTR Clearance)</strong><br>
-                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{call}, VFR 5 Minuten vor {arr}, 3500 Fuß, zur Landung.&quot;" data-en="&quot;{call}, VFR 5 minutes prior to {arr}, 3500 feet, for landing.&quot;"></span><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{call}, {type}, 5 Minuten vor {arr} in 3500 Fuß, VFR von {dest} zur Landung.&quot;" data-en="&quot;{call}, {type}, 5 minutes prior to {arr} at 3500 feet, VFR from {dest} for landing.&quot;"></span><br>
                 <span class="atc atc-twr-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, fliegen Sie über {arr} in die Kontrollzone ein, Piste {rwy}, QNH {qnh}, melden Sie {arr}.&quot;" data-en="&quot;{callShort}, enter control zone via {arr}, runway {rwy}, QNH {qnh}, report {arr}.&quot;"></span>
                 <div class="attention i18n" data-de="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Hat er Freigabegrenze ({arr}), &quot;Piste {rwy}&quot; und QNH {qnh} wiederholt?" data-en="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Hat er Freigabegrenze ({arr}), &quot;Runway {rwy}&quot; und QNH {qnh} wiederholt?"></div>
 
@@ -250,7 +252,7 @@
             </li>
             <li>
                 <strong>3. Platzrunde (Traffic Circuit)</strong><br>
-                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{callShort}, über {arr} in 3500 Fuß.&quot;" data-en="&quot;{callShort}, over {arr} at 3500 feet.&quot;"></span><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{callShort}, {arr} in 3500 Fuß.&quot;" data-en="&quot;{callShort}, {arr} at 3500 feet.&quot;"></span><br>
                 <span class="atc atc-twr-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, rechte Platzrunde Piste {rwy}, melden Sie Queranflug.&quot;" data-en="&quot;{callShort}, join right hand traffic circuit runway {rwy}, report base.&quot;"></span>
 
                 <details class="curveball">
@@ -278,13 +280,13 @@
             </li>
             <li>
                 <strong>5. Piste verlassen & Übergabe an Boden (Runway Vacated)</strong><br>
-                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{apt} Turm, {callShort}, Piste {rwy} verlassen über Delta.&quot;" data-en="&quot;{apt} Tower, {callShort}, runway {rwy} vacated via Delta.&quot;"></span><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{callShort}, Piste {rwy} verlassen über Delta.&quot;" data-en="&quot;{callShort}, runway {rwy} vacated via Delta.&quot;"></span><br>
                 <span class="atc atc-twr-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{callShort}, kontaktieren Sie Rollkontrolle auf {gndFreq}.&quot;" data-en="&quot;{callShort}, contact Ground on {gndFreq}.&quot;"></span><br>
                 <div class="attention i18n" data-de="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler darf erst funken, wenn er die Pistenbegrenzungslinie komplett überquert hat." data-en="👉 <strong>WORAUF DU ACHTEN MUSST:</strong> Der Schüler darf erst funken, wenn er die Pistenbegrenzungslinie komplett überquert hat."></div>
             </li>
             <li>
                 <strong>6. Rollen zum Parkplatz (Taxi-In)</strong><br>
-                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{apt} Rollkontrolle, {callShort}, auf Delta, erbitte Rollen zum Abstellplatz der allgemeinen Luftfahrt.&quot;" data-en="&quot;{apt} Ground, {callShort}, on Delta, request taxi to General Aviation Terminal.&quot;"></span><br>
+                <span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;{callShort}, Rollhalt Delta, erbitte Rollen zum Abstellplatz der allgemeinen Luftfahrt.&quot;" data-en="&quot;{callShort}, holding point Delta, request taxi to General Aviation Terminal.&quot;"></span><br>
                 <span class="atc-gnd atc-gnd-label">Du (Boden):</span> <span class="i18n" data-de="&quot;{callShort}, rollen Sie zum Abstellplatz der allgemeinen Luftfahrt über Delta und November.&quot;" data-en="&quot;{callShort}, taxi to General Aviation Terminal via Delta and November.&quot;"></span>
                 
                 <details class="curveball">
@@ -309,7 +311,7 @@
             <details class="curveball">
                 <summary class="i18n" data-de="🔴 Szenario 1: MAYDAY (Triebwerksausfall)" data-en="🔴 Scenario 1: MAYDAY (Engine Failure)"></summary>
                 <p><strong class="i18n" data-de="Situation: Komplettausfall vor {arr}, Außenlandung auf Feld." data-en="Situation: Complete failure prior to {arr}, forced landing on field."></strong></p>
-                <p><span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;Mayday, Mayday, Mayday. {apt} Turm, {call}, Cessna 172, Triebwerksausfall 2 Meilen vor {arr}, 3000 Fuß sinkend. Führe Notlandung auf Feld durch.&quot;" data-en="&quot;Mayday, Mayday, Mayday. {apt} Tower, {call}, Cessna 172, engine failure 2 miles prior to {arr}, descending 3000 feet. Executing forced landing on a field.&quot;"></span></p>
+                <p><span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;Mayday, Mayday, Mayday. {apt} Turm, {call}, {type}, Triebwerksausfall 2 Meilen vor {arr}, 3000 Fuß sinkend. Führe Notlandung auf Feld durch.&quot;" data-en="&quot;Mayday, Mayday, Mayday. {apt} Tower, {call}, {type}, engine failure 2 miles prior to {arr}, descending 3000 feet. Executing forced landing on a field.&quot;"></span></p>
                 <p><span class="atc atc-twr-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, {apt} Turm, Mayday verstanden. Wenn möglich, melden Sie Personen an Bord (POB).&quot;" data-en="&quot;{call}, {apt} Tower, Mayday roger. If able, report persons on board (POB).&quot;"></span></p>
                 <div class="attention i18n" data-de="👉 <strong>Controller-Fokus:</strong> Frag nach POB für die Feuerwehr. Gib unaufgefordert Wind und QNH. Keine Frequenzwechsel verlangen!" data-en="👉 <strong>Controller-Fokus:</strong> Frag nach POB für die Feuerwehr. Gib unaufgefordert Wind und QNH. Keine Frequenzwechsel verlangen!"></div>
             </details>
@@ -317,7 +319,7 @@
             <details class="curveball">
                 <summary class="i18n" data-de="🟠 Szenario 2: PAN-PAN (Dringlichkeit / Unruhiger Motor)" data-en="🟠 Scenario 2: PAN-PAN (Urgency / Rough Engine)"></summary>
                 <p><strong class="i18n" data-de="Situation: Motor läuft unrund, Pilot will direkt landen." data-en="Situation: Rough running engine, pilot requests direct landing."></strong></p>
-                <p><span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;Pan-Pan, Pan-Pan, Pan-Pan. {apt} Turm, {call}, Cessna 172, unruhiger Motorlauf über {dep} in 3500 Fuß. Erbitte direkte Rückkehr und Landung Piste {rwy}.&quot;" data-en="&quot;Pan-Pan, Pan-Pan, Pan-Pan. {apt} Tower, {call}, Cessna 172, rough running engine over {dep} at 3500 feet. Request immediate return and landing runway {rwy}.&quot;"></span></p>
+                <p><span class="student student-label">Schüler:</span> <span class="i18n" data-de="&quot;Pan-Pan, Pan-Pan, Pan-Pan. {apt} Turm, {call}, {type}, unruhiger Motorlauf über {dep} in 3500 Fuß. Erbitte direkte Rückkehr und Landung Piste {rwy}.&quot;" data-en="&quot;Pan-Pan, Pan-Pan, Pan-Pan. {apt} Tower, {call}, {type}, rough running engine over {dep} at 3500 feet. Request immediate return and landing runway {rwy}.&quot;"></span></p>
                 <p><span class="atc atc-twr-label">Du (Turm):</span> <span class="i18n" data-de="&quot;{call}, {apt} Turm, Pan-Pan verstanden. Direkter Anflug Piste {rwy} genehmigt. Sie haben Priorität. Piste {rwy} Landung frei.&quot;" data-en="&quot;{call}, {apt} Tower, Pan-Pan roger. Cleared for straight-in approach runway {rwy}. Runway {rwy} cleared to land.&quot;"></span></p>
                 <div class="attention i18n" data-de="👉 <strong>Controller-Fokus:</strong> Weg freiräumen. Am Ende fragen: &quot;Benötigen Sie medizinische Assistenz/Feuerwehr nach der Landung?&quot;" data-en="👉 <strong>Controller-Fokus:</strong> Weg freiräumen. Am Ende fragen: &quot;Do you require medical assistance or fire brigade upon arrival?&quot;"></div>
             </details>
@@ -339,11 +341,13 @@
             // 1. Werte aus den Feldern auslesen
             const lang = document.getElementById('lang').value;
             const apt = document.getElementById('airport').value || 'Stuttgart';
+            const dest = document.getElementById('destAirport').value || 'Freiburg';
             const twrFreq = document.getElementById('twrFreq').value || '119.055';
             const gndFreq = document.getElementById('gndFreq').value || '118.605';
-            const call = document.getElementById('callsign').value.toUpperCase() || 'D-EABC';
+            const call = document.getElementById('callsign').value.toUpperCase() || 'D-ESIA';
+            const type = document.getElementById('acType').value || 'Robin DR-400';
             
-            // 2. Kurzform des Rufzeichens berechnen (z.B. D-EABC -> D-BC)
+            // 2. Kurzform des Rufzeichens berechnen (z.B. D-ESIA -> D-IA)
             let callShort = call;
             const parts = call.split('-');
             if (parts.length === 2 && parts[1].length >= 2) {
@@ -364,11 +368,13 @@
                     let updatedText = textTemplate
                         .replace(/{call}/g, call)
                         .replace(/{callShort}/g, callShort)
+                        .replace(/{type}/g, type)
                         .replace(/{rwy}/g, rwy)
                         .replace(/{qnh}/g, qnh)
                         .replace(/{dep}/g, dep)
                         .replace(/{arr}/g, arr)
                         .replace(/{apt}/g, apt)
+                        .replace(/{dest}/g, dest)
                         .replace(/{twrFreq}/g, twrFreq)
                         .replace(/{gndFreq}/g, gndFreq);
                     el.innerHTML = updatedText;
